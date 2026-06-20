@@ -1,0 +1,12 @@
+services:
+  discord-presence:
+    build: .
+    container_name: discord-presence
+    restart: unless-stopped
+    volumes:
+      # Linux: Discord tworzy socket IPC w /run/user/<UID>/discord-ipc-0 (zwykle symlink do /tmp/...)
+      # Podmień <UID> na wynik komendy `id -u` jeśli się nie połączy.
+      - /run/user/1000/discord-ipc-0:/run/user/1000/discord-ipc-0
+
+      # Żeby zmieniać status bez przebudowy obrazu - edytuj ten plik na hoście
+      - ./config.json:/app/config.json

@@ -1,0 +1,20 @@
+{
+  "_komentarz": "Edytuj ten plik i zapisz - status na Discordzie zaktualizuje się automatycznie, bez restartu serwisu.",
+
+  "clientId": "1517794827260133486",
+
+  "details": "Robię coś fajnego",
+  "state": "Etap: planowanie",
+
+  "_komentarz_obrazki": "Klucze obrazków musisz wcześniej wgrać w Discord Developer Portal -> Rich Presence -> Art Assets. Zostaw puste '' jeśli nie chcesz obrazka.",
+  "largeImageKey": "",
+  "largeImageText": "",
+  "smallImageKey": "",
+  "smallImageText": "",
+
+  "_komentarz_czas": "true = licznik czasu pokazuje ile minęło od startu serwisu. false = bez licznika.",
+  "showTimestamp": true,
+
+  "_komentarz_przyciski": "Maksymalnie 2 przyciski. Zostaw pustą tablicę [] jeśli nie chcesz przycisków. label = tekst, url = link (musi zaczynać się od http:// lub https://)",
+  "buttons": []
+}
