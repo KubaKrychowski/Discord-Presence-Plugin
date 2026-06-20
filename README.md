@@ -1,4 +1,5 @@
 # Discord Presence — your own Rich Presence status
+## Propose your app name in comment :)
 
 A small service that sets your Discord status (the "Playing..." line) based
 on a `config.json` file. Edit the config, save it — the status updates
