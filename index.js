@@ -10,7 +10,7 @@ let connected = false;
 let startTimestamp = Date.now();
 
 function log(msg) {
-  const time = new Date().toLocaleTimeString("pl-PL");
+  const time = new Date().toLocaleTimeString("en-US");
   console.log(`[${time}] ${msg}`);
 }
 
@@ -20,12 +20,12 @@ function loadConfig() {
     const cfg = JSON.parse(raw);
 
     if (!cfg.clientId || cfg.clientId.trim() === "") {
-      throw new Error("Brak 'clientId' w config.json. Wklej tam Application ID z Discord Developer Portal.");
+      throw new Error("Missing 'clientId' in config.json. Paste your Application ID from the Discord Developer Portal there.");
     }
 
     return cfg;
   } catch (err) {
-    log(`❌ Błąd wczytywania config.json: ${err.message}`);
+    log(`Error loading config.json: ${err.message}`);
     return null;
   }
 }
@@ -62,7 +62,7 @@ function buildActivity(cfg) {
 
 async function applyPresence() {
   if (!connected || !rpc) {
-    log("⏳ Jeszcze nie połączono z Discordem, pomijam aktualizację.");
+    log("Not connected to Discord yet, skipping update.");
     return;
   }
 
@@ -73,16 +73,16 @@ async function applyPresence() {
 
   try {
     await rpc.user?.setActivity(activity);
-    log(`✅ Status zaktualizowany: "${activity.details || ""}" / "${activity.state || ""}"`);
+    log(`Status updated: "${activity.details || ""}" / "${activity.state || ""}"`);
   } catch (err) {
-    log(`❌ Nie udało się ustawić statusu: ${err.message}`);
+    log(`Failed to set status: ${err.message}`);
   }
 }
 
 async function start() {
   const cfg = loadConfig();
   if (!cfg) {
-    log("Popraw config.json i uruchom serwis ponownie.");
+    log("Fix config.json and restart the service.");
     process.exit(1);
   }
 
@@ -90,39 +90,39 @@ async function start() {
 
   rpc.on("ready", () => {
     connected = true;
-    log(`🔗 Połączono z Discordem jako: ${rpc.user?.username ?? "nieznany użytkownik"}`);
+    log(`Connected to Discord as: ${rpc.user?.username ?? "unknown user"}`);
     applyPresence();
   });
 
   rpc.on("disconnected", () => {
     connected = false;
-    log("⚠️  Rozłączono z Discordem. Próbuję połączyć ponownie...");
+    log("Disconnected from Discord. Trying to reconnect...");
   });
 
-  log("🔄 Łączenie z lokalnym klientem Discord (musi być uruchomiony i zalogowany)...");
+  log("Connecting to local Discord client (it must be running and logged in)...");
 
   try {
     await rpc.login();
   } catch (err) {
-    log(`❌ Nie udało się połączyć: ${err.message}`);
-    log("   Sprawdź czy Discord jest uruchomiony na tym komputerze i czy clientId w config.json jest poprawny.");
-    log("   Serwis będzie ponawiał próbę co 15 sekund.");
+    log(`Failed to connect: ${err.message}`);
+    log("   Check that Discord is running on this machine and that clientId in config.json is correct.");
+    log("   The service will retry every 15 seconds.");
     setTimeout(start, 15000);
     return;
   }
 
-  // Śledzenie zmian w config.json na żywo
+  // Watch config.json for live changes
   const watcher = chokidar.watch(CONFIG_PATH, { ignoreInitial: true });
   watcher.on("change", () => {
-    log("📝 Wykryto zmianę w config.json, aktualizuję status...");
+    log("Detected a change in config.json, updating status...");
     applyPresence();
   });
 
-  log("👀 Obserwuję config.json pod kątem zmian. Edytuj plik, żeby zmienić status na żywo.");
+  log("Watching config.json for changes. Edit the file to update the status live.");
 }
 
 process.on("SIGINT", () => {
-  log("Zamykanie serwisu...");
+  log("Shutting down service...");
   if (rpc) rpc.destroy();
   process.exit(0);
 });
